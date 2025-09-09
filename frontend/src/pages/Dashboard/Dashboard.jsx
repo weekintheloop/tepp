@@ -63,7 +63,7 @@ const Dashboard = () => {
       if (result.success) {
         setDashboardData(result.data);
         if (isRefresh) {
-          toast.success('Dashboard atualizado', 'Dados atualizados com sucesso');
+          success('Dashboard atualizado', 'Dados atualizados com sucesso');
         }
       } else {
         toast.error('Erro', result.error || 'Não foi possível carregar os dados');
