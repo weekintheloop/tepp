@@ -70,7 +70,7 @@ const Dashboard = () => {
       }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
-      toast.error('Erro', 'Erro inesperado ao carregar dashboard');
+      error('Erro', 'Erro inesperado ao carregar dashboard');
     } finally {
       setLoading(false);
       setRefreshing(false);
