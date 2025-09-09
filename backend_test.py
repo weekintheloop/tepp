@@ -61,6 +61,31 @@ class SIGTEAPITester:
         else:
             return self.log_test("API Root", False, f"- Response: {response}")
 
+    def test_specific_endpoints(self):
+        """Test specific endpoints that are failing"""
+        if not self.token:
+            return self.log_test("Specific Endpoints", False, "- No token available")
+        
+        endpoints_to_test = [
+            ('/analytics/frequency-trends?days=7', 'Frequency Trends'),
+            ('/analytics/route-efficiency', 'Route Efficiency'),
+            ('/analytics/risk-students?limit=20', 'Risk Students'),
+            ('/analytics/maintenance-alerts', 'Maintenance Alerts'),
+            ('/analytics/student-risk', 'Student Risk Analysis'),
+            ('/system/health', 'System Health'),
+            ('/system/metrics', 'System Metrics')
+        ]
+        
+        results = []
+        for endpoint, name in endpoints_to_test:
+            success, response = self.make_request('GET', endpoint, expected_status=200)
+            status = "✅" if success else "❌"
+            results.append(f"{status} {name}")
+            if not success:
+                print(f"   Failed {name}: {response}")
+        
+        return self.log_test("Specific Endpoints", True, f"- Results: {', '.join(results)}")
+
     def test_user_registration(self):
         """Test user registration"""
         timestamp = datetime.now().strftime('%H%M%S')
