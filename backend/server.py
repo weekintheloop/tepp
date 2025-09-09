@@ -365,6 +365,53 @@ async def register_user(user_data: UserCreate):
     await db.users.insert_one(user.dict())
     return UserResponse(**user.dict())
 
+# Create demo users on startup
+async def create_demo_users():
+    """Create demo users if they don't exist"""
+    demo_users = [
+        {
+            "nome": "Administrador Demo",
+            "email": "admin@sigte.com",
+            "celular": "(61) 99999-0001",
+            "role": "admin",
+            "senha": "admin123"
+        },
+        {
+            "nome": "Secretário Demo",
+            "email": "secretario@sigte.com", 
+            "celular": "(61) 99999-0002",
+            "role": "secretario",
+            "senha": "sec123"
+        },
+        {
+            "nome": "Monitor Demo",
+            "email": "monitor@sigte.com",
+            "celular": "(61) 99999-0003", 
+            "role": "monitor",
+            "senha": "mon123"
+        },
+        {
+            "nome": "Diretor Demo",
+            "email": "diretor@sigte.com",
+            "celular": "(61) 99999-0004",
+            "role": "diretor", 
+            "senha": "dir123"
+        }
+    ]
+    
+    for user_data in demo_users:
+        existing_user = await db.users.find_one({"email": user_data["email"]})
+        if not existing_user:
+            user = User(
+                nome=user_data["nome"],
+                email=user_data["email"], 
+                celular=user_data["celular"],
+                role=user_data["role"],
+                senha_hash=hash_password(user_data["senha"])
+            )
+            await db.users.insert_one(user.dict())
+            logger.info(f"Demo user created: {user_data['email']}")
+
 @api_router.post("/auth/login")
 async def login_user(login_data: UserLogin):
     user = await db.users.find_one({"email": login_data.email})
