@@ -496,10 +496,171 @@ async def shutdown_db_client():
     client.close()
 
 # Root endpoint
+# Advanced Analytics Routes
+@api_router.get("/analytics/frequency-trends")
+async def get_frequency_trends(
+    days: int = Query(7, ge=1, le=90),
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Get frequency trends for specified number of days
+    """
+    if analytics_service:
+        return await analytics_service.get_frequency_trends(days)
+    return {"labels": [], "values": [], "studentCounts": []}
+
+@api_router.get("/analytics/route-efficiency")
+async def get_route_efficiency(current_user: dict = Depends(get_current_user)):
+    """
+    Get route efficiency analysis
+    """
+    if analytics_service:
+        return await analytics_service.get_route_efficiency()
+    return {"labels": [], "values": [], "colors": [], "total_routes": 0}
+
+@api_router.get("/analytics/risk-students")
+async def get_risk_students(
+    limit: int = Query(20, ge=1, le=100),
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Get students at risk of dropping out
+    """
+    if current_user["role"] not in ["admin", "secretario", "diretor"]:
+        raise HTTPException(status_code=403, detail="Acesso negado")
+    
+    if analytics_service:
+        return await analytics_service.get_risk_students(limit)
+    return []
+
+@api_router.get("/analytics/maintenance-alerts")
+async def get_maintenance_alerts(current_user: dict = Depends(get_current_user)):
+    """
+    Get vehicle maintenance alerts
+    """
+    if analytics_service:
+        return await analytics_service.get_maintenance_alerts()
+    return []
+
+# Student Risk Analysis Routes
+@api_router.get("/analytics/student-risk/{student_id}")
+async def analyze_student_risk(
+    student_id: str,
+    comprehensive: bool = Query(False),
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Comprehensive risk analysis for a specific student
+    """
+    if current_user["role"] not in ["admin", "secretario", "diretor"]:
+        raise HTTPException(status_code=403, detail="Acesso negado")
+    
+    if risk_service:
+        return await risk_service.analyze_student_risk(student_id, comprehensive)
+    return {"success": False, "error": "Serviço de análise de risco indisponível"}
+
+@api_router.get("/analytics/student-risk")
+async def analyze_all_students_risk(
+    comprehensive: bool = Query(False),
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Risk analysis for all active students
+    """
+    if current_user["role"] not in ["admin", "secretario"]:
+        raise HTTPException(status_code=403, detail="Acesso negado - apenas admin e secretario")
+    
+    if risk_service:
+        return await risk_service.analyze_student_risk(None, comprehensive)
+    return {"success": False, "error": "Serviço de análise de risco indisponível"}
+
+@api_router.post("/analytics/absence-patterns")
+async def analyze_absence_patterns(
+    student_id: Optional[str] = None,
+    days: int = Query(30, ge=7, le=180),
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Advanced absence pattern analysis
+    """
+    if current_user["role"] not in ["admin", "secretario", "diretor"]:
+        raise HTTPException(status_code=403, detail="Acesso negado")
+    
+    if analytics_service:
+        return await analytics_service.analyze_absence_patterns(student_id, days)
+    return {"success": False, "error": "Serviço de analytics indisponível"}
+
+@api_router.post("/interventions/workflow")
+async def run_intervention_workflow(
+    student_ids: Optional[List[str]] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Execute intervention workflow for at-risk students
+    """
+    if current_user["role"] not in ["admin", "secretario"]:
+        raise HTTPException(status_code=403, detail="Acesso negado - apenas admin e secretario")
+    
+    if analytics_service:
+        return await analytics_service.run_intervention_workflow(student_ids)
+    return {"success": False, "error": "Serviço de analytics indisponível"}
+
+# System Performance Routes
+@api_router.get("/system/health")
+async def system_health_check():
+    """
+    Comprehensive system health check
+    """
+    try:
+        # Test database connection
+        await db.command("ping")
+        db_status = "healthy"
+    except Exception as e:
+        db_status = f"unhealthy: {str(e)}"
+    
+    # Test services
+    analytics_status = "healthy" if analytics_service else "unavailable"
+    risk_analysis_status = "healthy" if risk_service else "unavailable"
+    
+    return {
+        "status": "healthy" if db_status == "healthy" else "degraded",
+        "timestamp": datetime.utcnow().isoformat(),
+        "version": "2.0.0",
+        "components": {
+            "database": db_status,
+            "analytics_service": analytics_status,
+            "risk_analysis_service": risk_analysis_status
+        },
+        "uptime": "N/A",  # Would be calculated in production
+        "memory_usage": "N/A",  # Would be calculated in production
+        "active_connections": "N/A"  # Would be calculated in production
+    }
+
+@api_router.get("/system/metrics")
+async def get_system_metrics(current_user: dict = Depends(get_current_user)):
+    """
+    System performance metrics
+    """
+    if current_user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Acesso negado - apenas admin")
+    
+    if analytics_service:
+        return await analytics_service.get_performance_metrics()
+    return {}
+
+# Root endpoint
 @api_router.get("/")
 async def root():
     return {
         "message": "SIG-TE API - Sistema de Gestão de Transporte Escolar",
         "version": "2.0.0",
-        "status": "active"
+        "status": "active",
+        "features": [
+            "Advanced Analytics",
+            "Student Risk Analysis", 
+            "Absence Pattern Detection",
+            "Automatic Interventions",
+            "Real-time Dashboard",
+            "Maintenance Alerts"
+        ]
     }
