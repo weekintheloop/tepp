@@ -477,39 +477,35 @@ const Dashboard = () => {
         </Card>
       )}
 
-      {/* System Status */}
+      {/* Quick Actions */}
       <Card className="border-0 shadow-sm bg-card/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle>Status do Sistema</CardTitle>
+          <CardTitle>Ações Rápidas</CardTitle>
           <CardDescription>
-            Monitoramento em tempo real dos serviços
+            Acesso direto às principais funcionalidades
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="flex items-center gap-3">
-              <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
-              <div>
-                <p className="font-medium">API do Sistema</p>
-                <p className="text-sm text-muted-foreground">Operacional</p>
-              </div>
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <Button className="h-12 flex-col gap-1" variant="outline">
+              <Users className="w-5 h-5" />
+              <span className="text-xs">Frequência</span>
+            </Button>
             
-            <div className="flex items-center gap-3">
-              <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
-              <div>
-                <p className="font-medium">Base de Dados</p>
-                <p className="text-sm text-muted-foreground">Conectado</p>
-              </div>
-            </div>
+            <Button className="h-12 flex-col gap-1" variant="outline">
+              <GraduationCap className="w-5 h-5" />
+              <span className="text-xs">Alunos</span>
+            </Button>
             
-            <div className="flex items-center gap-3">
-              <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
-              <div>
-                <p className="font-medium">Sincronização</p>
-                <p className="text-sm text-muted-foreground">Atualizado</p>
-              </div>
-            </div>
+            <Button className="h-12 flex-col gap-1" variant="outline">
+              <AlertTriangle className="w-5 h-5" />
+              <span className="text-xs">Ocorrências</span>
+            </Button>
+            
+            <Button className="h-12 flex-col gap-1" variant="outline">
+              <BarChart3 className="w-5 h-5" />
+              <span className="text-xs">Relatórios</span>
+            </Button>
           </div>
         </CardContent>
       </Card>
