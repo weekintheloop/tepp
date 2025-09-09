@@ -152,19 +152,16 @@ class SIGTEAPITester:
         # Dashboard functionality
         self.test_dashboard_stats()
         
-        # If login failed, try registration
+        # If login failed, try registration and login with new user
         if not self.token:
             print("\n🔄 Login failed, trying registration...")
-            self.test_user_registration()
-            if self.user_id:
+            if self.test_user_registration():
                 # Try login with registered user
-                login_data = {
-                    "email": f"admin_test_{datetime.now().strftime('%H%M%S')}@sigte.com",
-                    "senha": "admin123"
-                }
-                success, response = self.make_request('POST', '/auth/login', login_data, 200)
-                if success:
-                    self.token = response['access_token']
+                timestamp = datetime.now().strftime('%H%M%S')
+                test_email = f"admin_test_{timestamp}@sigte.com"
+                print(f"🔄 Trying login with registered user: {test_email}")
+                if self.test_user_login(test_email, "admin123"):
+                    self.test_auth_me()
                     self.test_dashboard_stats()
 
         # Print results
