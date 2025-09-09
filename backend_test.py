@@ -293,6 +293,7 @@ class SIGTEAPITester:
         # Advanced Analytics Tests (only if authenticated)
         if self.token:
             print("\n📊 Testing Advanced Analytics Features...")
+            self.test_specific_endpoints()
             self.test_advanced_dashboard_analytics()
             self.test_frequency_trends()
             self.test_route_efficiency()
