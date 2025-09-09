@@ -15,6 +15,10 @@ import jwt
 from passlib.context import CryptContext
 import re
 
+# Import advanced services
+from services.analytics_service import AnalyticsService
+from services.student_risk_service import StudentRiskAnalysisService
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
