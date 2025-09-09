@@ -97,7 +97,7 @@ const ConfiguracoesPage = () => {
         confirmar_senha: ''
       }));
     } catch (error) {
-      toast.error('Erro', 'Não foi possível atualizar o perfil');
+      error('Erro', 'Não foi possível atualizar o perfil');
     } finally {
       setLoading(false);
     }
