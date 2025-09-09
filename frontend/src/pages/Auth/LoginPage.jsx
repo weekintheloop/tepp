@@ -41,8 +41,8 @@ const LoginPage = () => {
 
   const demoCredentials = [
     { role: 'Admin', email: 'admin@sigte.com', password: 'admin123' },
-    { role: 'Secretário', email: 'secretario@sigte.com', password: 'sec123' },
-    { role: 'Monitor', email: 'monitor@sigte.com', password: 'mon123' }
+    { role: 'Secretário', email: 'monitor@sigte.com', password: 'mon123' },
+    { role: 'Monitor', email: 'secretario@sigte.com', password: 'sec123' }
   ];
 
   return (
