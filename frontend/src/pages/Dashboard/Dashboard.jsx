@@ -242,40 +242,55 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Stats Grid */}
+      {/* Enhanced Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {statCards.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <Card key={index} className="card-hover border-0 shadow-sm bg-card/50 backdrop-blur-sm">
+            <Card key={index} className="card-hover border-0 shadow-sm bg-card/50 backdrop-blur-sm group">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
-                  <div className="space-y-2">
-                    <p className="text-muted-foreground text-sm font-medium">
-                      {stat.title}
-                    </p>
+                  <div className="space-y-3 flex-1">
+                    <div className="flex items-center justify-between">
+                      <p className="text-muted-foreground text-sm font-medium">
+                        {stat.title}
+                      </p>
+                      {getTrendIcon(stat.trend)}
+                    </div>
+                    
                     <div className="flex items-baseline space-x-2">
-                      <p className="text-2xl font-bold text-foreground">
+                      <p className="text-3xl font-bold text-foreground group-hover:text-primary transition-colors">
                         {stat.value}
                       </p>
                       <Badge 
                         variant="secondary" 
                         className={`text-xs ${
-                          stat.trend.startsWith('+') 
+                          stat.trend === 'up'
                             ? 'text-success bg-success/10 border-success/20' 
-                            : stat.trend.startsWith('-')
+                            : stat.trend === 'down'
                             ? 'text-destructive bg-destructive/10 border-destructive/20'
                             : 'text-muted-foreground bg-muted'
                         }`}
                       >
-                        {stat.trend}
+                        {stat.change}
                       </Badge>
                     </div>
+                    
                     <p className="text-xs text-muted-foreground">
                       {stat.description}
                     </p>
+                    
+                    {stat.critical > 0 && (
+                      <div className="flex items-center gap-1 mt-2">
+                        <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                        <span className="text-xs text-red-600 font-medium">
+                          {stat.critical} crítico{stat.critical > 1 ? 's' : ''}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                  <div className={`p-3 rounded-xl ${stat.bgColor}`}>
+                  
+                  <div className={`p-3 rounded-xl ${stat.bgColor} group-hover:scale-110 transition-transform`}>
                     <Icon className={`w-6 h-6 ${stat.color}`} />
                   </div>
                 </div>
