@@ -117,7 +117,7 @@ const OcorrenciasPage = () => {
       fetchOcorrencias();
     } catch (error) {
       console.error('Error resolving ocorrencia:', error);
-      toast.error('Erro', 'Não foi possível resolver a ocorrência');
+      error('Erro', 'Não foi possível resolver a ocorrência');
     }
   };
 
