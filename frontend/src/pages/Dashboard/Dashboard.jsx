@@ -30,26 +30,50 @@ import {
   Shield
 } from 'lucide-react';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
-
 const Dashboard = () => {
   const { user } = useAuth();
-  const [stats, setStats] = useState(null);
+  const { toast } = useToast();
+  const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    fetchDashboardStats();
+    fetchDashboardData();
+    
+    // Auto-refresh a cada 5 minutos
+    const interval = setInterval(() => {
+      if (!refreshing) {
+        fetchDashboardData(true);
+      }
+    }, 300000);
+
+    return () => clearInterval(interval);
   }, []);
 
-  const fetchDashboardStats = async () => {
+  const fetchDashboardData = async (isRefresh = false) => {
     try {
-      const response = await axios.get(`${API}/dashboard/stats`);
-      setStats(response.data);
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
+
+      const result = await AnalyticsService.getDashboardAnalytics();
+      
+      if (result.success) {
+        setDashboardData(result.data);
+        if (isRefresh) {
+          toast.success('Dashboard atualizado', 'Dados atualizados com sucesso');
+        }
+      } else {
+        toast.error('Erro', result.error || 'Não foi possível carregar os dados');
+      }
     } catch (error) {
-      console.error('Error fetching dashboard stats:', error);
+      console.error('Error fetching dashboard data:', error);
+      toast.error('Erro', 'Erro inesperado ao carregar dashboard');
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
