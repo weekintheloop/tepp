@@ -75,7 +75,7 @@ const ConfiguracoesPage = () => {
           return;
         }
         if (profileData.nova_senha.length < 6) {
-          toast.error('Erro', 'A senha deve ter pelo menos 6 caracteres');
+          error('Erro', 'A senha deve ter pelo menos 6 caracteres');
           return;
         }
       }
