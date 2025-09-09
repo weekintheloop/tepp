@@ -78,11 +78,16 @@ class SIGTEAPITester:
         else:
             return self.log_test("User Registration", False, f"- Response: {response}")
 
-    def test_user_login(self):
+    def test_user_login(self, email=None, password=None):
         """Test user login with demo credentials"""
+        if not email:
+            email = "admin@sigte.com"
+        if not password:
+            password = "admin123"
+            
         login_data = {
-            "email": "admin@sigte.com",
-            "senha": "admin123"
+            "email": email,
+            "senha": password
         }
         
         success, response = self.make_request('POST', '/auth/login', login_data, 200)
