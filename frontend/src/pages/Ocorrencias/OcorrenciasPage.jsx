@@ -113,7 +113,7 @@ const OcorrenciasPage = () => {
       await axios.put(`${API}/ocorrencias/${ocorrenciaId}/resolver`, {
         observacoes: 'Resolvido via interface web'
       });
-      toast.success('Sucesso', 'Ocorrência marcada como resolvida');
+      success('Sucesso', 'Ocorrência marcada como resolvida');
       fetchOcorrencias();
     } catch (error) {
       console.error('Error resolving ocorrencia:', error);
