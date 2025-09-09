@@ -81,84 +81,123 @@ const Dashboard = () => {
     return (
       <div className="flex items-center justify-center h-64">
         <LoadingSpinner size="lg" />
+        <span className="ml-3 text-muted-foreground">Carregando analytics avançados...</span>
       </div>
     );
   }
 
+  if (!dashboardData) {
+    return (
+      <div className="space-y-6">
+        <Alert>
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            Não foi possível carregar os dados do dashboard. Verifique sua conexão.
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
+  const kpis = dashboardData.kpis || {};
+  const performanceMetrics = dashboardData.performanceMetrics || {};
+  const maintenanceAlerts = dashboardData.maintenanceAlerts || [];
+  const riskStudents = dashboardData.riskStudents || [];
+
   const statCards = [
     {
-      title: 'Total de Alunos',
-      value: stats?.total_alunos || 0,
-      description: 'Alunos ativos no sistema',
+      title: 'Alunos Ativos',
+      value: kpis.totalActiveStudents || 0,
+      description: 'Total de alunos no sistema',
       icon: GraduationCap,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50 dark:bg-blue-950',
-      trend: '+5.2%'
+      change: '+5.2%',
+      trend: 'up'
     },
     {
       title: 'Rotas Ativas',
-      value: stats?.total_rotas_ativas || 0,
+      value: kpis.totalActiveRoutes || 0,
       description: 'Rotas em operação',
       icon: MapPin,
       color: 'text-green-600',
       bgColor: 'bg-green-50 dark:bg-green-950',
-      trend: '+2.1%'
+      change: '+2.1%',
+      trend: 'up'
     },
     {
-      title: 'Veículos',
-      value: stats?.total_veiculos || 0,
-      description: 'Veículos disponíveis',
+      title: 'Frota Disponível',
+      value: kpis.totalBuses || 0,
+      description: 'Veículos operacionais',
       icon: Bus,
       color: 'text-orange-600',
       bgColor: 'bg-orange-50 dark:bg-orange-950',
-      trend: '0%'
-    },
-    {
-      title: 'Escolas',
-      value: stats?.total_escolas || 0,
-      description: 'Escolas atendidas',
-      icon: School,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50 dark:bg-purple-950',
-      trend: '+1.5%'
+      change: '0%',
+      trend: 'stable'
     },
     {
       title: 'Taxa de Frequência',
-      value: `${stats?.taxa_frequencia_media?.toFixed(1) || 0}%`,
-      description: 'Média de presença hoje',
+      value: `${kpis.overallAttendanceRate?.toFixed(1) || 0}%`,
+      description: 'Média de presença',
       icon: CheckCircle,
       color: 'text-emerald-600',
       bgColor: 'bg-emerald-50 dark:bg-emerald-950',
-      trend: '+0.8%'
+      change: '+0.8%',
+      trend: 'up'
     },
     {
-      title: 'Alunos Transportados',
-      value: stats?.alunos_transportados_hoje || 0,
-      description: 'Alunos transportados hoje',
-      icon: Users,
+      title: 'Utilização da Frota',
+      value: `${kpis.averageFleetUtilization?.toFixed(1) || 0}%`,
+      description: 'Eficiência operacional',
+      icon: Target,
       color: 'text-cyan-600',
       bgColor: 'bg-cyan-50 dark:bg-cyan-950',
-      trend: '+12.3%'
+      change: '+1.2%',
+      trend: 'up'
     },
     {
-      title: 'Rotas em Operação',
-      value: stats?.rotas_em_operacao || 0,
-      description: 'Rotas ativas hoje',
-      icon: TrendingUp,
-      color: 'text-indigo-600',
-      bgColor: 'bg-indigo-50 dark:bg-indigo-950',
-      trend: '+3.2%'
-    },
-    {
-      title: 'Ocorrências Abertas',
-      value: stats?.ocorrencias_abertas || 0,
-      description: 'Pendências para resolver',
+      title: 'Incidentes Abertos',
+      value: kpis.openIncidents || 0,
+      description: 'Requer atenção',
       icon: AlertTriangle,
       color: 'text-red-600',
       bgColor: 'bg-red-50 dark:bg-red-950',
-      trend: '-15%'
+      change: '-15%',
+      trend: 'down',
+      critical: kpis.criticalIncidents || 0
+    },
+    {
+      title: 'Performance Geral',
+      value: `${performanceMetrics.punctualityScore?.toFixed(1) || 0}%`,
+      description: 'Score de pontualidade',
+      icon: Activity,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50 dark:bg-purple-950',
+      change: '+2.5%',
+      trend: 'up'
+    },
+    {
+      title: 'Sistema',
+      value: `${performanceMetrics.systemUptime?.toFixed(1) || 0}%`,
+      description: 'Uptime do sistema',
+      icon: Shield,
+      color: 'text-indigo-600',
+      bgColor: 'bg-indigo-50 dark:bg-indigo-950',
+      change: '+0.1%',
+      trend: 'stable'
     }
   ];
+
+  const getTrendIcon = (trend) => {
+    switch (trend) {
+      case 'up':
+        return <TrendingUp className="w-3 h-3 text-green-600" />;
+      case 'down':
+        return <TrendingUp className="w-3 h-3 text-red-600 rotate-180" />;
+      default:
+        return <div className="w-3 h-3 rounded-full bg-gray-400" />;
+    }
+  };
 
   return (
     <div className="space-y-8 animate-fade-in">
