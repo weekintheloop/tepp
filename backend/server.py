@@ -49,6 +49,7 @@ async def startup_event():
     global analytics_service, risk_service
     analytics_service = AnalyticsService(db)
     risk_service = StudentRiskAnalysisService(db)
+    await create_demo_users()
 
 # Create API router
 api_router = APIRouter(prefix="/api")
