@@ -29,7 +29,7 @@ import {
 } from 'lucide-react';
 
 const ConfiguracoesPage = () => {
-  const { toast } = useToast();
+  const { success, error } = useToast();
   const { theme, toggleTheme, isDark } = useTheme();
   const { user, updateUser } = useAuth();
   const [loading, setLoading] = useState(false);
