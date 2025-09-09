@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../contexts/ToastContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
+import { Alert, AlertDescription } from '../../components/ui/alert';
 import LoadingSpinner from '../../components/ui/loading-spinner';
+import AnalyticsService from '../../services/analyticsService';
+import {
+  FrequencyTrendChart,
+  RouteEfficiencyPieChart,
+  RiskDistributionChart,
+  MetricsSummary
+} from '../../components/Charts/AdvancedCharts';
 import {
   Users,
   GraduationCap,
@@ -14,9 +23,12 @@ import {
   CheckCircle,
   Clock,
   MapPin,
-  BarChart3
+  BarChart3,
+  Activity,
+  Zap,
+  Target,
+  Shield
 } from 'lucide-react';
-import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
