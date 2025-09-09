@@ -71,7 +71,7 @@ const ConfiguracoesPage = () => {
       // Validate passwords if changing
       if (profileData.nova_senha) {
         if (profileData.nova_senha !== profileData.confirmar_senha) {
-          toast.error('Erro', 'As senhas não coincidem');
+          error('Erro', 'As senhas não coincidem');
           return;
         }
         if (profileData.nova_senha.length < 6) {
