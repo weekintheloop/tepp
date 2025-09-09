@@ -208,7 +208,7 @@ const Dashboard = () => {
             Bem-vindo, {user?.nome?.split(' ')[0]}! 👋
           </h1>
           <p className="text-muted-foreground mt-1">
-            Aqui está um resumo do seu sistema de transporte escolar
+            Dashboard executivo com analytics avançados e insights em tempo real
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -218,8 +218,27 @@ const Dashboard = () => {
           </Badge>
           <Badge variant="outline">
             <Clock className="w-3 h-3 mr-1" />
-            Atualizado há 2 min
+            {dashboardData.timestamp ? 
+              `Atualizado ${new Date(dashboardData.timestamp).toLocaleTimeString('pt-BR', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+              })}` : 
+              'Atualizado agora'
+            }
           </Badge>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => fetchDashboardData(true)}
+            disabled={refreshing}
+          >
+            {refreshing ? (
+              <LoadingSpinner size="sm" className="mr-2" />
+            ) : (
+              <Zap className="w-4 h-4 mr-2" />
+            )}
+            Atualizar
+          </Button>
         </div>
       </div>
 
