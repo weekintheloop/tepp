@@ -32,7 +32,7 @@ import {
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const { toast } = useToast();
+  const { toast, error, success } = useToast();
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
