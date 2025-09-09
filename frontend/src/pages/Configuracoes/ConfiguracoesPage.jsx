@@ -87,7 +87,7 @@ const ConfiguracoesPage = () => {
         celular: profileData.celular
       });
 
-      toast.success('Sucesso', 'Perfil atualizado com sucesso');
+      success('Sucesso', 'Perfil atualizado com sucesso');
       
       // Clear password fields
       setProfileData(prev => ({
