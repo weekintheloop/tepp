@@ -44,7 +44,7 @@ const OcorrenciasPage = () => {
       setOcorrencias(response.data);
     } catch (error) {
       console.error('Error fetching ocorrencias:', error);
-      toast.error('Erro', 'Não foi possível carregar as ocorrências');
+      error('Erro', 'Não foi possível carregar as ocorrências');
     } finally {
       setLoading(false);
     }
