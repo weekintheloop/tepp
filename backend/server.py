@@ -391,9 +391,29 @@ async def login_user(login_data: UserLogin):
 async def get_current_user_info(current_user: dict = Depends(get_current_user)):
     return UserResponse(**current_user)
 
-# Dashboard Routes
-@api_router.get("/dashboard/stats", response_model=DashboardStats)
+# Dashboard Routes - Advanced Analytics
+@api_router.get("/analytics/dashboard")
+async def get_dashboard_analytics(current_user: dict = Depends(get_current_user)):
+    """
+    Advanced dashboard analytics with comprehensive KPIs and insights
+    """
+    if current_user["role"] not in ["admin", "secretario", "diretor"]:
+        raise HTTPException(status_code=403, detail="Acesso negado para este endpoint")
+    
+    try:
+        if analytics_service:
+            return await analytics_service.get_dashboard_analytics()
+        else:
+            raise HTTPException(status_code=500, detail="Serviço de analytics indisponível")
+    except Exception as e:
+        logging.error(f"Erro no dashboard analytics: {e}")
+        raise HTTPException(status_code=500, detail="Erro interno no servidor")
+
+@api_router.get("/dashboard/stats", response_model=DashboardStats) 
 async def get_dashboard_stats(current_user: dict = Depends(get_current_user)):
+    """
+    Legacy dashboard stats endpoint for backward compatibility
+    """
     # Count statistics
     total_alunos = await db.alunos.count_documents({"status": StatusEnum.ATIVO})
     total_rotas_ativas = await db.rotas.count_documents({"status": StatusEnum.ATIVO})
