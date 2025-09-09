@@ -566,9 +566,12 @@ async def analyze_absence_patterns(
         return await analytics_service.analyze_absence_patterns(student_id, days)
     return {"success": False, "error": "Serviço de analytics indisponível"}
 
+class InterventionWorkflowRequest(BaseModel):
+    student_ids: Optional[List[str]] = None
+
 @api_router.post("/interventions/workflow")
 async def run_intervention_workflow(
-    student_ids: Optional[List[str]] = None,
+    request: InterventionWorkflowRequest = InterventionWorkflowRequest(),
     current_user: dict = Depends(get_current_user)
 ):
     """
@@ -578,7 +581,7 @@ async def run_intervention_workflow(
         raise HTTPException(status_code=403, detail="Acesso negado - apenas admin e secretario")
     
     if analytics_service:
-        return await analytics_service.run_intervention_workflow(student_ids)
+        return await analytics_service.run_intervention_workflow(request.student_ids)
     return {"success": False, "error": "Serviço de analytics indisponível"}
 
 # System Performance Routes
