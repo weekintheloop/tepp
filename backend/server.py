@@ -36,9 +36,19 @@ ALGORITHM = "HS256"
 # Create the main app
 app = FastAPI(
     title="SIG-TE - Sistema de Gestão de Transporte Escolar",
-    description="Sistema completo para gestão de transporte escolar",
+    description="Sistema completo para gestão de transporte escolar com analytics avançados e análise de risco",
     version="2.0.0"
 )
+
+# Initialize advanced services
+analytics_service = None
+risk_service = None
+
+@app.on_event("startup")
+async def startup_event():
+    global analytics_service, risk_service
+    analytics_service = AnalyticsService(db)
+    risk_service = StudentRiskAnalysisService(db)
 
 # Create API router
 api_router = APIRouter(prefix="/api")
