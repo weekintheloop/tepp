@@ -1,153 +1,156 @@
 import React, { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Label } from '../../components/ui/label';
-import { Bus, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Badge } from '../../components/ui/badge';
+import { Bus, Eye, EyeOff } from 'lucide-react';
+import LoadingSpinner from '../../components/ui/loading-spinner';
 
 const LoginPage = () => {
-  const { login, isAuthenticated } = useAuth();
-  const { toast } = useToast();
-  const [formData, setFormData] = useState({
-    email: '',
-    senha: ''
-  });
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-
-  // Redirect if already authenticated
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const { success, error } = useToast();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const result = await login(formData.email, formData.senha);
+      const result = await login(email, password);
       
       if (result.success) {
-        toast.success('Login realizado com sucesso!', 'Bem-vindo ao SIG-TE');
+        success('Login realizado', 'Bem-vindo ao SIG-TE!');
+        navigate('/dashboard');
       } else {
-        toast.error('Erro no login', result.error);
+        error('Erro no login', result.error);
       }
-    } catch (error) {
-      toast.error('Erro no login', 'Ocorreu um erro inesperado');
+    } catch (err) {
+      error('Erro no login', 'Ocorreu um erro inesperado');
     } finally {
       setLoading(false);
     }
   };
 
+  const demoCredentials = [
+    { role: 'Admin', email: 'admin@sigte.com', password: 'admin123' },
+    { role: 'Secretário', email: 'secretario@sigte.com', password: 'sec123' },
+    { role: 'Monitor', email: 'monitor@sigte.com', password: 'mon123' }
+  ];
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-secondary/5 p-4">
-      <div className="w-full max-w-md">
-        {/* Logo and Title */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-2xl mb-4">
-            <Bus className="w-8 h-8 text-primary-foreground" />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4">
+      <Card className="w-full max-w-md shadow-xl">
+        <CardHeader className="text-center space-y-4">
+          <div className="mx-auto w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
+            <Bus className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold sigte-logo mb-2">SIG-TE</h1>
-          <p className="text-muted-foreground">Sistema de Gestão de Transporte Escolar</p>
-        </div>
-
-        {/* Login Form */}
-        <Card className="shadow-xl border-0 bg-card/50 backdrop-blur-sm">
-          <CardHeader className="space-y-1 text-center">
-            <CardTitle className="text-2xl font-semibold">Entrar</CardTitle>
-            <CardDescription>
-              Digite suas credenciais para acessar o sistema
+          <div>
+            <CardTitle className="text-2xl font-bold text-blue-600">SIG-TE</CardTitle>
+            <CardDescription className="text-gray-600">
+              Sistema de Gestão de Transporte Escolar
             </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="seu@email.com"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="h-11"
-                />
-              </div>
+          </div>
+        </CardHeader>
+        
+        <CardContent className="space-y-6">
+          <div className="text-center">
+            <h2 className="text-xl font-semibold mb-2">Entrar</h2>
+            <p className="text-sm text-muted-foreground">
+              Digite suas credenciais para acessar o sistema
+            </p>
+          </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="senha">Senha</Label>
-                <div className="relative">
-                  <Input
-                    id="senha"
-                    name="senha"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Digite sua senha"
-                    value={formData.senha}
-                    onChange={handleChange}
-                    required
-                    className="h-11 pr-10"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-4 h-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="w-4 h-4 text-muted-foreground" />
-                    )}
-                  </Button>
-                </div>
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full h-11"
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="seu@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
                 disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Entrando...
-                  </>
-                ) : (
-                  'Entrar'
-                )}
-              </Button>
-            </form>
+              />
+            </div>
 
-            {/* Demo Credentials */}
-            <div className="mt-6 p-4 bg-muted/30 rounded-lg">
-              <p className="text-sm font-medium text-foreground mb-2">Credenciais de Demonstração:</p>
-              <div className="space-y-1 text-xs text-muted-foreground">
-                <p><strong>Admin:</strong> admin@sigte.com / admin123</p>
-                <p><strong>Secretário:</strong> secretario@sigte.com / sec123</p>
-                <p><strong>Monitor:</strong> monitor@sigte.com / mon123</p>
+            <div className="space-y-2">
+              <Label htmlFor="password">Senha</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Digite sua senha"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={loading}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={loading}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </Button>
               </div>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Footer */}
-        <div className="text-center mt-8 text-sm text-muted-foreground">
-          <p>&copy; 2024 SIG-TE. Todos os direitos reservados.</p>
-        </div>
-      </div>
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <LoadingSpinner size="sm" className="mr-2" />
+                  Entrando...
+                </>
+              ) : (
+                'Entrar'
+              )}
+            </Button>
+          </form>
+
+          <div className="space-y-3">
+            <div className="text-center">
+              <p className="text-sm font-medium text-muted-foreground">
+                Credenciais de Demonstração:
+              </p>
+            </div>
+            
+            <div className="space-y-2">
+              {demoCredentials.map((cred, index) => (
+                <div key={index} className="text-xs text-muted-foreground">
+                  <Badge variant="outline" className="mr-2">{cred.role}:</Badge>
+                  <span className="font-mono">{cred.email}</span>
+                  <span className="mx-1">/</span>
+                  <span className="font-mono">{cred.password}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="text-center text-xs text-muted-foreground">
+            © 2024 SIG-TE. Todos os direitos reservados.
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
