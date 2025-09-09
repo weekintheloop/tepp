@@ -123,6 +123,104 @@ class SIGTEAPITester:
         else:
             return self.log_test("Dashboard Stats", False, f"- Response: {response}")
 
+    def test_advanced_dashboard_analytics(self):
+        """Test advanced dashboard analytics endpoint"""
+        if not self.token:
+            return self.log_test("Advanced Dashboard Analytics", False, "- No token available")
+        
+        success, response = self.make_request('GET', '/analytics/dashboard', expected_status=200)
+        if success:
+            return self.log_test("Advanced Dashboard Analytics", True, f"- Analytics data loaded")
+        else:
+            return self.log_test("Advanced Dashboard Analytics", False, f"- Response: {response}")
+
+    def test_frequency_trends(self):
+        """Test frequency trends analytics"""
+        if not self.token:
+            return self.log_test("Frequency Trends", False, "- No token available")
+        
+        success, response = self.make_request('GET', '/analytics/frequency-trends?days=7', expected_status=200)
+        if success and isinstance(response, dict):
+            return self.log_test("Frequency Trends", True, f"- Trends data available")
+        else:
+            return self.log_test("Frequency Trends", False, f"- Response: {response}")
+
+    def test_route_efficiency(self):
+        """Test route efficiency analytics"""
+        if not self.token:
+            return self.log_test("Route Efficiency", False, "- No token available")
+        
+        success, response = self.make_request('GET', '/analytics/route-efficiency', expected_status=200)
+        if success and isinstance(response, dict):
+            return self.log_test("Route Efficiency", True, f"- Efficiency data available")
+        else:
+            return self.log_test("Route Efficiency", False, f"- Response: {response}")
+
+    def test_risk_students(self):
+        """Test students at risk analytics"""
+        if not self.token:
+            return self.log_test("Risk Students", False, "- No token available")
+        
+        success, response = self.make_request('GET', '/analytics/risk-students?limit=20', expected_status=200)
+        if success and isinstance(response, list):
+            return self.log_test("Risk Students", True, f"- Found {len(response)} risk students")
+        else:
+            return self.log_test("Risk Students", False, f"- Response: {response}")
+
+    def test_maintenance_alerts(self):
+        """Test maintenance alerts"""
+        if not self.token:
+            return self.log_test("Maintenance Alerts", False, "- No token available")
+        
+        success, response = self.make_request('GET', '/analytics/maintenance-alerts', expected_status=200)
+        if success and isinstance(response, list):
+            return self.log_test("Maintenance Alerts", True, f"- Found {len(response)} maintenance alerts")
+        else:
+            return self.log_test("Maintenance Alerts", False, f"- Response: {response}")
+
+    def test_system_health(self):
+        """Test system health check"""
+        success, response = self.make_request('GET', '/system/health', expected_status=200)
+        if success and response.get('status'):
+            status = response.get('status')
+            components = response.get('components', {})
+            return self.log_test("System Health", True, f"- Status: {status}, DB: {components.get('database', 'unknown')}")
+        else:
+            return self.log_test("System Health", False, f"- Response: {response}")
+
+    def test_intervention_workflow(self):
+        """Test intervention workflow"""
+        if not self.token:
+            return self.log_test("Intervention Workflow", False, "- No token available")
+        
+        success, response = self.make_request('POST', '/interventions/workflow', {}, expected_status=200)
+        if success:
+            return self.log_test("Intervention Workflow", True, f"- Workflow executed")
+        else:
+            return self.log_test("Intervention Workflow", False, f"- Response: {response}")
+
+    def test_student_risk_analysis(self):
+        """Test student risk analysis endpoint"""
+        if not self.token:
+            return self.log_test("Student Risk Analysis", False, "- No token available")
+        
+        success, response = self.make_request('GET', '/analytics/student-risk', expected_status=200)
+        if success:
+            return self.log_test("Student Risk Analysis", True, f"- Risk analysis completed")
+        else:
+            return self.log_test("Student Risk Analysis", False, f"- Response: {response}")
+
+    def test_system_metrics(self):
+        """Test system performance metrics"""
+        if not self.token:
+            return self.log_test("System Metrics", False, "- No token available")
+        
+        success, response = self.make_request('GET', '/system/metrics', expected_status=200)
+        if success:
+            return self.log_test("System Metrics", True, f"- Metrics available")
+        else:
+            return self.log_test("System Metrics", False, f"- Response: {response}")
+
     def test_unauthorized_access(self):
         """Test accessing protected endpoint without token"""
         # Temporarily remove token
