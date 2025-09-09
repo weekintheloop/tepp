@@ -300,89 +300,182 @@ const Dashboard = () => {
         })}
       </div>
 
-      {/* Quick Actions */}
+      {/* Advanced Analytics Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Activity */}
+        {/* Frequency Trend Chart */}
         <Card className="border-0 shadow-sm bg-card/50 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="w-5 h-5" />
-              Atividade Recente
+              Tendência de Frequência
             </CardTitle>
             <CardDescription>
-              Últimas ações no sistema
+              Taxa de presença dos últimos 7 dias
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-              <div className="w-2 h-2 rounded-full bg-green-500"></div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">Frequência registrada</p>
-                <p className="text-xs text-muted-foreground">Rota Centro - 45 alunos presentes</p>
-              </div>
-              <span className="text-xs text-muted-foreground">5 min</span>
-            </div>
-            
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-              <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">Novo aluno cadastrado</p>
-                <p className="text-xs text-muted-foreground">Maria Silva - Escola Central</p>
-              </div>
-              <span className="text-xs text-muted-foreground">12 min</span>
-            </div>
-            
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-              <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">Manutenção agendada</p>
-                <p className="text-xs text-muted-foreground">Veículo ABC-1234 - 15/01/2024</p>
-              </div>
-              <span className="text-xs text-muted-foreground">1 hora</span>
-            </div>
-            
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-              <div className="w-2 h-2 rounded-full bg-purple-500"></div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">Rota otimizada</p>
-                <p className="text-xs text-muted-foreground">Rota Periferia - tempo reduzido em 5 min</p>
-              </div>
-              <span className="text-xs text-muted-foreground">2 horas</span>
-            </div>
+          <CardContent>
+            <FrequencyTrendChart 
+              data={dashboardData.frequencyTrends}
+              height={280}
+            />
           </CardContent>
         </Card>
 
-        {/* Quick Actions */}
+        {/* Route Efficiency Pie Chart */}
         <Card className="border-0 shadow-sm bg-card/50 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle>Ações Rápidas</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Target className="w-5 h-5" />
+              Eficiência das Rotas
+            </CardTitle>
             <CardDescription>
-              Acesso rápido às principais funcionalidades
+              Distribuição por categoria de performance
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <Button className="w-full justify-start h-12" variant="outline">
-              <Users className="w-4 h-4 mr-2" />
-              Registrar Frequência
-            </Button>
-            
-            <Button className="w-full justify-start h-12" variant="outline">
-              <GraduationCap className="w-4 h-4 mr-2" />
-              Cadastrar Aluno
-            </Button>
-            
-            <Button className="w-full justify-start h-12" variant="outline">
-              <AlertTriangle className="w-4 h-4 mr-2" />
-              Reportar Ocorrência
-            </Button>
-            
-            <Button className="w-full justify-start h-12" variant="outline">
-              <BarChart3 className="w-4 h-4 mr-2" />
-              Gerar Relatório
-            </Button>
+          <CardContent>
+            <RouteEfficiencyPieChart 
+              data={dashboardData.routeEfficiency}
+              height={280}
+            />
           </CardContent>
         </Card>
       </div>
+
+      {/* Risk Analysis Section */}
+      {riskStudents.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Risk Distribution Chart */}
+          <Card className="border-0 shadow-sm bg-card/50 backdrop-blur-sm lg:col-span-2">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5" />
+                Análise de Risco de Evasão
+              </CardTitle>
+              <CardDescription>
+                Distribuição de alunos por nível de risco
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <RiskDistributionChart 
+                data={riskStudents}
+                height={280}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Risk Students List */}
+          <Card className="border-0 shadow-sm bg-card/50 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="w-5 h-5" />
+                Alunos em Risco
+              </CardTitle>
+              <CardDescription>
+                Requer atenção imediata
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {riskStudents.slice(0, 5).map((student, index) => (
+                <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-muted/20">
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{student.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      RA: {student.ra} | {student.absenceRate}% ausências
+                    </p>
+                  </div>
+                  <Badge 
+                    className={`text-xs ${
+                      student.riskLevel === 'CRITICAL' ? 'bg-red-100 text-red-800 border-red-200' :
+                      student.riskLevel === 'HIGH' ? 'bg-orange-100 text-orange-800 border-orange-200' :
+                      'bg-yellow-100 text-yellow-800 border-yellow-200'
+                    }`}
+                  >
+                    {student.riskLevel}
+                  </Badge>
+                </div>
+              ))}
+              
+              {riskStudents.length > 5 && (
+                <Button variant="outline" size="sm" className="w-full">
+                  Ver todos ({riskStudents.length})
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Maintenance Alerts */}
+      {maintenanceAlerts.length > 0 && (
+        <Card className="border-0 shadow-sm bg-card/50 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5" />
+              Alertas de Manutenção
+            </CardTitle>
+            <CardDescription>
+              Veículos que precisam de atenção
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {maintenanceAlerts.slice(0, 6).map((alert, index) => (
+                <div key={index} className={`p-4 rounded-lg border-2 ${
+                  alert.alertLevel === 'CRITICAL' ? 'border-red-200 bg-red-50 dark:bg-red-950' :
+                  alert.alertLevel === 'URGENT' ? 'border-orange-200 bg-orange-50 dark:bg-orange-950' :
+                  'border-yellow-200 bg-yellow-50 dark:bg-yellow-950'
+                }`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="font-medium text-sm">{alert.plate}</p>
+                    <Badge 
+                      variant="outline"
+                      className={
+                        alert.alertLevel === 'CRITICAL' ? 'border-red-500 text-red-700' :
+                        alert.alertLevel === 'URGENT' ? 'border-orange-500 text-orange-700' :
+                        'border-yellow-500 text-yellow-700'
+                      }
+                    >
+                      {alert.alertLevel}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-1">
+                    {alert.model} - {alert.driver}
+                  </p>
+                  <p className="text-xs font-medium">
+                    {alert.message}
+                  </p>
+                </div>
+              ))}
+            </div>
+            
+            {maintenanceAlerts.length > 6 && (
+              <div className="mt-4 text-center">
+                <Button variant="outline" size="sm">
+                  Ver todos os alertas ({maintenanceAlerts.length})
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Performance Metrics Summary */}
+      {performanceMetrics && Object.keys(performanceMetrics).length > 0 && (
+        <Card className="border-0 shadow-sm bg-card/50 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="w-5 h-5" />
+              Métricas de Performance
+            </CardTitle>
+            <CardDescription>
+              Indicadores de qualidade e eficiência do sistema
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <MetricsSummary metrics={performanceMetrics} />
+          </CardContent>
+        </Card>
+      )}
 
       {/* System Status */}
       <Card className="border-0 shadow-sm bg-card/50 backdrop-blur-sm">
