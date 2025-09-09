@@ -243,6 +243,7 @@ class SIGTEAPITester:
         
         # Basic connectivity
         self.test_api_root()
+        self.test_system_health()
         
         # Authentication flow
         self.test_user_login()  # Try with demo credentials first
@@ -263,6 +264,18 @@ class SIGTEAPITester:
                 if self.test_user_login(test_email, "admin123"):
                     self.test_auth_me()
                     self.test_dashboard_stats()
+
+        # Advanced Analytics Tests (only if authenticated)
+        if self.token:
+            print("\n📊 Testing Advanced Analytics Features...")
+            self.test_advanced_dashboard_analytics()
+            self.test_frequency_trends()
+            self.test_route_efficiency()
+            self.test_risk_students()
+            self.test_maintenance_alerts()
+            self.test_student_risk_analysis()
+            self.test_intervention_workflow()
+            self.test_system_metrics()
 
         # Print results
         print("\n" + "=" * 50)
