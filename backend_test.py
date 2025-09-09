@@ -63,9 +63,11 @@ class SIGTEAPITester:
 
     def test_user_registration(self):
         """Test user registration"""
+        timestamp = datetime.now().strftime('%H%M%S')
+        self.test_email = f"admin_test_{timestamp}@sigte.com"
         test_user_data = {
             "nome": "Test Admin",
-            "email": f"admin_test_{datetime.now().strftime('%H%M%S')}@sigte.com",
+            "email": self.test_email,
             "celular": "(61) 99999-9999",
             "role": "admin",
             "senha": "admin123"
