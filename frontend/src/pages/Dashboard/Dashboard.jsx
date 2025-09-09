@@ -66,7 +66,7 @@ const Dashboard = () => {
           success('Dashboard atualizado', 'Dados atualizados com sucesso');
         }
       } else {
-        toast.error('Erro', result.error || 'Não foi possível carregar os dados');
+        error('Erro', result.error || 'Não foi possível carregar os dados');
       }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
